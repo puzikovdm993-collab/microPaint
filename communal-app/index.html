@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Домашняя коммуналка</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🏠 Коммуналка</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" data-page="dashboard" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Дашборд</span>
+                </a>
+                <a href="#" data-page="meters" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span class="nav-text">Счетчики</span>
+                </a>
+                <a href="#" data-page="services" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Услуги</span>
+                </a>
+                <a href="#" data-page="payments" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span class="nav-text">Платежи</span>
+                </a>
+                <a href="#" data-page="history" class="nav-item">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-text">История</span>
+                </a>
+                <a href="#" data-page="analytics" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">Аналитика</span>
+                </a>
+                <a href="#" data-page="settings" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Настройки</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="payment-deadline" id="paymentDeadline"></div>
+            </div>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2 id="pageTitle">Дашборд</h2>
+                <div class="current-period" id="currentPeriod"></div>
+            </header>
+
+            <div class="content-area" id="contentArea">
+                <!-- Контент загружается динамически -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Заголовок</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Содержимое модального окна -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <!-- Кнопки модального окна -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Скрипты -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/services/tariffService.js"></script>
+    <script src="js/services/meterService.js"></script>
+    <script src="js/services/paymentService.js"></script>
+    <script src="js/services/analyticsService.js"></script>
+    <script src="js/services/forecastService.js"></script>
+    <script src="js/components/modal.js"></script>
+    <script src="js/components/notification.js"></script>
+    <script src="js/components/chart.js"></script>
+    <script src="js/ui/dashboard.js"></script>
+    <script src="js/ui/meters.js"></script>
+    <script src="js/ui/services.js"></script>
+    <script src="js/ui/payments.js"></script>
+    <script src="js/ui/history.js"></script>
+    <script src="js/ui/analytics.js"></script>
+    <script src="js/ui/settings.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
