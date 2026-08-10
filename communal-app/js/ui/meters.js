@@ -133,6 +133,13 @@ const MetersUI = {
     showAddMeterModal() {
         const services = AppState.data.services.filter(s => s.calcType === 'meter');
         
+        // Если нет услуг с типом "по счетчику", предлагаем сначала создать услуги
+        if (services.length === 0) {
+            Notification.info('Сначала добавьте коммунальные услуги с типом расчета "По счетчику"');
+            ServicesUI.showAddServiceModal();
+            return;
+        }
+        
         const content = `
             <form id="addMeterForm">
                 <div class="form-group">

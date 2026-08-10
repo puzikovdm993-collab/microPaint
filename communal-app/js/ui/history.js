@@ -66,19 +66,19 @@ const HistoryUI = {
                         AppState.data.tariffs = [];
                         
                         // Сохраняем изменения
-                        StorageService.save();
+                        AppState.save();
                         
                         // Закрываем модальное окно
                         Modal.close();
                         
                         // Показываем уведомление
-                        Notification.show('История успешно очищена', 'success');
+                        Notification.success('История успешно очищена');
                         
                         // Перерисовываем интерфейс
                         HistoryUI.render();
                         
                         // Обновляем дашборд если он активен
-                        if (AppState.currentPage === 'dashboard') {
+                        if (App.currentPage === 'dashboard') {
                             DashboardUI.render();
                         }
                     }

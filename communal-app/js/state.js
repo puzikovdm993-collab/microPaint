@@ -39,8 +39,28 @@ const AppState = {
             if (!hasBeenInitialized && !hasBeenCleared) {
                 this.createDemoData();
                 localStorage.setItem(StorageService.STORAGE_KEY + '_initialized', 'true');
+            } else {
+                // Если данные были очищены или не загружены - инициализируем пустыми данными
+                this.data = {
+                    settings: {
+                        propertyName: '',
+                        area: 0,
+                        residents: 0,
+                        currency: 'RUB',
+                        paymentDeadlineDay: 10,
+                        anomalyThreshold: 20,
+                        forecastMonths: 3
+                    },
+                    services: [],
+                    meters: [],
+                    readings: [],
+                    tariffs: [],
+                    payments: [],
+                    expenses: []
+                };
+                // Сохраняем пустые данные, чтобы они были доступны сразу
+                this.save();
             }
-            // Если данные были очищены вручную - оставляем пустые данные
         }
         return this;
     },
