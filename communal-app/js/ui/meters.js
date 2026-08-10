@@ -137,6 +137,8 @@ const MetersUI = {
         if (services.length === 0) {
             Notification.info('Сначала добавьте коммунальные услуги с типом расчета "По счетчику"');
             ServicesUI.showAddServiceModal();
+            // После добавления услуги нужно будет вернуться к добавлению счетчика
+            window.pendingMeterAdd = true;
             return;
         }
         
