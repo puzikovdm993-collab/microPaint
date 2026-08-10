@@ -30,7 +30,14 @@ const AppState = {
         if (savedData) {
             this.data = savedData;
         } else {
-            this.createDemoData();
+            // Проверяем, был ли пользователь уже в приложении (не первый запуск после очистки)
+            const hasBeenInitialized = localStorage.getItem(StorageService.STORAGE_KEY + '_initialized');
+            if (!hasBeenInitialized) {
+                // Первый запуск - создаем демо-данные
+                this.createDemoData();
+                localStorage.setItem(StorageService.STORAGE_KEY + '_initialized', 'true');
+            }
+            // Если был initialized но данных нет - оставляем пустые данные (после очистки)
         }
         return this;
     },

@@ -40,6 +40,8 @@ const StorageService = {
     clear() {
         try {
             localStorage.removeItem(this.STORAGE_KEY);
+            // Также удаляем флаг о том, что демо-данные были созданы
+            localStorage.removeItem(this.STORAGE_KEY + '_initialized');
             return true;
         } catch (e) {
             console.error('Ошибка очистки данных:', e);

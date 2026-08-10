@@ -111,6 +111,11 @@ const SettingsUI = {
                     <p>Версия: 1.0.0</p>
                     <p>Данные хранятся локально в браузере (localStorage)</p>
                 </div>
+                <div class="form-row" style="margin-top: 1rem;">
+                    <button class="btn btn-secondary" onclick="Onboarding.showAgain()">
+                        ❓ Пройти обучение заново
+                    </button>
+                </div>
             </div>
         `;
 

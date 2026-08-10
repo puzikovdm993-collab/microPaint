@@ -35,6 +35,9 @@ const App = {
         // Рендерим текущую страницу
         this.renderPage(this.currentPage);
         
+        // Показываем обучение если это первый запуск
+        Onboarding.show();
+        
         console.log('Приложение запущено');
     },
 
