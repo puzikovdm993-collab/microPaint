@@ -160,6 +160,12 @@ const ServicesUI = {
         
         Notification.success('Услуга добавлена');
         this.render();
+        
+        // Если было запланировано добавление счетчика после создания услуги
+        if (window.pendingMeterAdd) {
+            window.pendingMeterAdd = false;
+            setTimeout(() => MetersUI.showAddMeterModal(), 300);
+        }
     },
 
     /**

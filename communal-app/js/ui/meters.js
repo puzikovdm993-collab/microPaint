@@ -13,6 +13,9 @@ const MetersUI = {
             <div class="section-header">
                 <h3 class="section-title">Счетчики</h3>
                 <div class="section-actions">
+                    <button class="btn btn-secondary" onclick="MetersUI.showAddMeterModal()">
+                        + Добавить счетчик
+                    </button>
                     <button class="btn btn-primary" onclick="MetersUI.showAddReadingModal()">
                         + Внести показания
                     </button>
@@ -137,6 +140,8 @@ const MetersUI = {
         if (services.length === 0) {
             Notification.info('Сначала добавьте коммунальные услуги с типом расчета "По счетчику"');
             ServicesUI.showAddServiceModal();
+            // После добавления услуги нужно будет вернуться к добавлению счетчика
+            window.pendingMeterAdd = true;
             return;
         }
         
