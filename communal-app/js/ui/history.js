@@ -12,6 +12,7 @@ const HistoryUI = {
         const html = `
             <div class="section-header">
                 <h3 class="section-title">История операций</h3>
+                ${history.length > 0 ? '<button class="btn btn-danger" onclick="HistoryUI.clearHistory()">Очистить историю</button>' : ''}
             </div>
             
             <div class="filters">
@@ -31,6 +32,59 @@ const HistoryUI = {
         `;
 
         document.getElementById('contentArea').innerHTML = html;
+    },
+
+    /**
+     * Очистка всей истории
+     */
+    clearHistory() {
+        Modal.open({
+            title: 'Очистить историю',
+            content: `
+                <div class="modal-content">
+                    <p><strong>Внимание!</strong> Это действие удалит все записи истории:</p>
+                    <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                        <li>Все показания счетчиков</li>
+                        <li>Все платежи</li>
+                        <li>Всю историю изменений тарифов</li>
+                    </ul>
+                    <p class="text-danger">Счетчики и услуги будут сохранены, но их история будет потеряна.</p>
+                    <p>Вы уверены?</p>
+                </div>
+            `,
+            buttons: [
+                { text: 'Отмена', type: 'secondary', onClick: () => Modal.close() },
+                { 
+                    text: 'Очистить', 
+                    type: 'danger', 
+                    onClick: () => {
+                        // Очищаем показания
+                        AppState.data.readings = [];
+                        // Очищаем платежи
+                        AppState.data.payments = [];
+                        // Очищаем тарифы (историю тарифов)
+                        AppState.data.tariffs = [];
+                        
+                        // Сохраняем изменения
+                        StorageService.save();
+                        
+                        // Закрываем модальное окно
+                        Modal.close();
+                        
+                        // Показываем уведомление
+                        Notification.show('История успешно очищена', 'success');
+                        
+                        // Перерисовываем интерфейс
+                        HistoryUI.render();
+                        
+                        // Обновляем дашборд если он активен
+                        if (AppState.currentPage === 'dashboard') {
+                            DashboardUI.render();
+                        }
+                    }
+                }
+            ]
+        });
     },
 
     /**
