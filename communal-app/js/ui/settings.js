@@ -115,6 +115,9 @@ const SettingsUI = {
                     <button class="btn btn-secondary" onclick="Onboarding.showAgain()">
                         ❓ Пройти обучение заново
                     </button>
+                    <button class="btn btn-danger" onclick="SettingsUI.fullReset()" style="margin-left: 1rem;">
+                        🗑️ Полный сброс приложения
+                    </button>
                 </div>
             </div>
         `;
@@ -223,6 +226,28 @@ const SettingsUI = {
             if (confirm('Вы действительно уверены? Все показания, платежи и настройки будут удалены.')) {
                 StorageService.clear();
                 Notification.success('Данные очищены');
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+    },
+    
+    /**
+     * Полный сброс приложения (включая флаг очистки)
+     */
+    fullReset() {
+        if (confirm('⚠️ Полностью сбросить приложение? Будут удалены все данные и сброшены все флаги. Приложение будет как после первой установки.')) {
+            if (confirm('Вы действительно уверены? Это действие нельзя отменить!')) {
+                // Очищаем все ключи localStorage нашего приложения
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith(StorageService.STORAGE_KEY)) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                
+                Notification.success('Приложение полностью сброшено');
                 setTimeout(() => location.reload(), 1000);
             }
         }

@@ -40,8 +40,10 @@ const StorageService = {
     clear() {
         try {
             localStorage.removeItem(this.STORAGE_KEY);
-            // Также удаляем флаг о том, что демо-данные были созданы
+            // Удаляем флаг о том, что демо-данные были созданы
             localStorage.removeItem(this.STORAGE_KEY + '_initialized');
+            // Устанавливаем флаг, что данные были очищены вручную
+            localStorage.setItem(this.STORAGE_KEY + '_cleared', 'true');
             return true;
         } catch (e) {
             console.error('Ошибка очистки данных:', e);
@@ -71,6 +73,8 @@ const StorageService = {
                 throw new Error('Неверная структура данных');
             }
             this.save(data);
+            // При импорте данных снимаем флаг очистки
+            localStorage.removeItem(this.STORAGE_KEY + '_cleared');
             return true;
         } catch (e) {
             console.error('Ошибка импорта данных:', e);
