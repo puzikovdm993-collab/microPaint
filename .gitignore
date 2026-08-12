@@ -1,0 +1,109 @@
+```
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+*.min.js
+*.min.css
+*.bundle.js
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage*
+.cache
+
+# Node.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+node_modules/
+jspm_packages/
+*.tsbuildinfo
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.gradle/
+build/
+target/
+
+# C/C++
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.obj
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.prof
+*.zip
+
+# Ruby
+*.gem
+*.rbc
+.bundle/
+.config/yardoc
+.yardoc
+Gemfile.lock
+pkg/
+
+# Rust
+/target/
+Cargo.lock
+
+# Julia
+julia-*/
+
+# Zig
+zig*/
+```

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Коммуналка - Учет коммунальных расходов</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/tables.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>🏠 Коммуналка</h1>
+                <button class="btn-icon sidebar-toggle" id="sidebarToggle" aria-label="Меню">☰</button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-view="dashboard">📊 Dashboard</a>
+                <a href="#accruals" class="nav-item" data-view="accruals">📋 Начисления</a>
+                <a href="#meters" class="nav-item" data-view="meters">🔢 Счетчики</a>
+                <a href="#tariffs" class="nav-item" data-view="tariffs">💰 Тарифы</a>
+                <a href="#analytics" class="nav-item" data-view="analytics">📈 Аналитика</a>
+                <a href="#services" class="nav-item" data-view="services">⚙️ Услуги</a>
+                <a href="#import-export" class="nav-item" data-view="import-export">📁 Импорт/Экспорт</a>
+                <a href="#settings" class="nav-item" data-view="settings">🔧 Настройки</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="theme-toggle">
+                    <span>🌙</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeSwitch">
+                        <span class="slider"></span>
+                    </label>
+                    <span>☀️</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="btn-icon mobile-menu-btn" id="mobileMenuBtn">☰</button>
+                    <h2 id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="month-selector">
+                        <button class="btn-icon" id="prevMonth">◀</button>
+                        <span id="currentMonthDisplay">Июль 2026</span>
+                        <button class="btn-icon" id="nextMonth">▶</button>
+                    </div>
+                    <div class="total-display" id="totalDisplay">
+                        Всего: <span>0 ₽</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div class="views-container" id="viewsContainer">
+                <!-- Dashboard View -->
+                <div class="view active" id="dashboardView">
+                    <div class="dashboard-summary">
+                        <div class="summary-card total">
+                            <div class="summary-icon">💰</div>
+                            <div class="summary-content">
+                                <h3>Всего начислено</h3>
+                                <p class="summary-value" id="dashTotalAmount">0 ₽</p>
+                                <p class="summary-change" id="dashTotalChange">--</p>
+                            </div>
+                        </div>
+                        <div class="summary-card water">
+                            <div class="summary-icon">💧</div>
+                            <div class="summary-content">
+                                <h3>Вода</h3>
+                                <p class="summary-value" id="dashWaterAmount">0 ₽</p>
+                                <p class="summary-change" id="dashWaterChange">--</p>
+                            </div>
+                        </div>
+                        <div class="summary-card electricity">
+                            <div class="summary-icon">⚡</div>
+                            <div class="summary-content">
+                                <h3>Электроэнергия</h3>
+                                <p class="summary-value" id="dashElectricityAmount">0 ₽</p>
+                                <p class="summary-change" id="dashElectricityChange">--</p>
+                            </div>
+                        </div>
+                        <div class="summary-card heating">
+                            <div class="summary-icon">🔥</div>
+                            <div class="summary-content">
+                                <h3>Отопление</h3>
+                                <p class="summary-value" id="dashHeatingAmount">0 ₽</p>
+                                <p class="summary-change" id="dashHeatingChange">--</p>
+                            </div>
+                        </div>
+                        <div class="summary-card maintenance">
+                            <div class="summary-icon">🏠</div>
+                            <div class="summary-content">
+                                <h3>Содержание</h3>
+                                <p class="summary-value" id="dashMaintenanceAmount">0 ₽</p>
+                                <p class="summary-change" id="dashMaintenanceChange">--</p>
+                            </div>
+                        </div>
+                        <div class="summary-card waste">
+                            <div class="summary-icon">♻</div>
+                            <div class="summary-content">
+                                <h3>ТКО</h3>
+                                <p class="summary-value" id="dashWasteAmount">0 ₽</p>
+                                <p class="summary-change" id="dashWasteChange">--</p>
+                            </div>
+                        </div>
+                        <div class="summary-card phone">
+                            <div class="summary-icon">☎</div>
+                            <div class="summary-content">
+                                <h3>Телефон</h3>
+                                <p class="summary-value" id="dashPhoneAmount">0 ₽</p>
+                                <p class="summary-change" id="dashPhoneChange">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-charts">
+                        <div class="chart-card">
+                            <h3>Структура расходов</h3>
+                            <div class="chart-container" id="structureChart"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Динамика расходов</h3>
+                            <div class="chart-container" id="trendChart"></div>
+                        </div>
+                    </div>
+
+                    <div class="alerts-section" id="alertsSection">
+                        <h3>⚠️ Аномалии и предупреждения</h3>
+                        <div class="alerts-list" id="alertsList"></div>
+                    </div>
+                </div>
+
+                <!-- Accruals View -->
+                <div class="view" id="accrualsView">
+                    <div class="table-controls">
+                        <button class="btn btn-primary" id="addAccrualBtn">+ Добавить начисление</button>
+                        <button class="btn" id="copyPreviousMonthBtn">Копировать предыдущий месяц</button>
+                        <select id="accrualMonthSelect" class="form-select"></select>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="accrualsTable">
+                            <thead>
+                                <tr>
+                                    <th class="service-col">Услуга</th>
+                                    <th>Ед.</th>
+                                    <th class="month-col">02.2026</th>
+                                    <th class="month-col">03.2026</th>
+                                    <th class="month-col">04.2026</th>
+                                    <th class="month-col">05.2026</th>
+                                    <th class="month-col">06.2026</th>
+                                    <th class="month-col">07.2026</th>
+                                    <th class="total-col">Итого</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accrualsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Meters View -->
+                <div class="view" id="metersView">
+                    <div class="table-controls">
+                        <button class="btn btn-primary" id="addMeterBtn">+ Добавить счетчик</button>
+                        <button class="btn btn-primary" id="addReadingBtn">+ Внести показания</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="metersTable">
+                            <thead>
+                                <tr>
+                                    <th>Счетчик</th>
+                                    <th>Тип</th>
+                                    <th>Ед.</th>
+                                    <th>Серийный №</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody id="metersTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="readings-section">
+                        <h3>Показания по месяцам</h3>
+                        <div class="table-wrapper">
+                            <table class="data-table" id="readingsTable">
+                                <thead>
+                                    <tr id="readingsHeaderRow">
+                                        <th>Счетчик</th>
+                                        <th>Ед.</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="readingsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tariffs View -->
+                <div class="view" id="tariffsView">
+                    <div class="table-controls">
+                        <button class="btn btn-primary" id="addTariffBtn">+ Добавить тариф</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="tariffsTable">
+                            <thead>
+                                <tr>
+                                    <th>Услуга</th>
+                                    <th>Тариф</th>
+                                    <th>Единица</th>
+                                    <th>Действует с</th>
+                                    <th>Действует по</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tariffsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Analytics View -->
+                <div class="view" id="analyticsView">
+                    <div class="analytics-filters">
+                        <label>Период:
+                            <select id="analyticsPeriodSelect">
+                                <option value="6">Последние 6 месяцев</option>
+                                <option value="12">Последние 12 месяцев</option>
+                                <option value="all">Все данные</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="charts-grid">
+                        <div class="chart-card full-width">
+                            <h3>Расход воды (м³)</h3>
+                            <div class="chart-container" id="waterConsumptionChart"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Электроэнергия (кВт·ч)</h3>
+                            <div class="chart-container" id="electricityConsumptionChart"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Сумма начислений (₽)</h3>
+                            <div class="chart-container" id="amountTrendChart"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Структура расходов</h3>
+                            <div class="chart-container" id="categoryPieChart"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Сравнение расчет/факт</h3>
+                            <div class="chart-container" id="comparisonChart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services View -->
+                <div class="view" id="servicesView">
+                    <div class="table-controls">
+                        <button class="btn btn-primary" id="addServiceBtn">+ Добавить услугу</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="servicesTable">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Краткое</th>
+                                    <th>Категория</th>
+                                    <th>Ед.</th>
+                                    <th>Счетчик</th>
+                                    <th>Активна</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="servicesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Import/Export View -->
+                <div class="view" id="importExportView">
+                    <div class="import-export-grid">
+                        <div class="ie-card">
+                            <h3>📥 Импорт данных</h3>
+                            <p>Загрузите данные из JSON или CSV файла</p>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="importFile" accept=".json,.csv">
+                                <button class="btn btn-primary" id="importBtn">Импортировать</button>
+                            </div>
+                            <div id="importPreview" class="import-preview"></div>
+                        </div>
+                        <div class="ie-card">
+                            <h3>📤 Экспорт данных</h3>
+                            <p>Сохраните данные в файл</p>
+                            <div class="export-buttons">
+                                <button class="btn" id="exportJsonBtn">Экспорт в JSON</button>
+                                <button class="btn" id="exportCsvBtn">Экспорт в CSV</button>
+                                <button class="btn" id="exportReportBtn">Экспорт отчета</button>
+                            </div>
+                        </div>
+                        <div class="ie-card">
+                            <h3>🗑️ Демонстрационные данные</h3>
+                            <p>Управление тестовыми данными</p>
+                            <button class="btn btn-danger" id="loadDemoDataBtn">Загрузить демо-данные</button>
+                            <button class="btn btn-danger" id="clearDemoDataBtn">Очистить демо-данные</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings View -->
+                <div class="view" id="settingsView">
+                    <div class="settings-section">
+                        <h3>Общие настройки</h3>
+                        <div class="form-group">
+                            <label>Тема оформления:</label>
+                            <select id="themeSelect" class="form-select">
+                                <option value="light">Светлая</option>
+                                <option value="dark">Темная</option>
+                                <option value="auto">Авто</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Валюта:</label>
+                            <select id="currencySelect" class="form-select">
+                                <option value="RUB">₽ (Рубли)</option>
+                                <option value="USD">$ (Доллары)</option>
+                                <option value="EUR">€ (Евро)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Точность отображения:</label>
+                            <div class="precision-settings">
+                                <label>Деньги: <input type="number" id="moneyPrecision" value="2" min="0" max="4"></label>
+                                <label>Объем (м³): <input type="number" id="volumePrecision" value="3" min="0" max="6"></label>
+                                <label>Энергия (кВт·ч): <input type="number" id="energyPrecision" value="2" min="0" max="4"></label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="saveSettingsBtn">Сохранить настройки</button>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Управление данными</h3>
+                        <button class="btn btn-danger" id="clearAllDataBtn">Очистить все данные</button>
+                        <button class="btn" id="backupDataBtn">Создать резервную копию</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Template -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Заголовок</h3>
+                <button class="btn-icon modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <!-- Dynamic buttons -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/calculations.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/meters.js"></script>
+    <script src="js/tariffs.js"></script>
+    <script src="js/accruals.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/import-export.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

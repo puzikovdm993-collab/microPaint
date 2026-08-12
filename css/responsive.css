@@ -1,0 +1,367 @@
+/* ============================================
+   Responsive CSS
+   ============================================ */
+
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
+    .dashboard-summary {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .dashboard-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-value {
+        font-size: 1.3rem;
+    }
+}
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 0;
+    }
+
+    #app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 280px;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+
+    .header {
+        padding: 0 15px;
+    }
+
+    .header h2 {
+        font-size: 1.1rem;
+    }
+
+    .month-selector span {
+        display: none;
+    }
+
+    .total-display {
+        display: none;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .views-container {
+        padding: 15px;
+    }
+
+    /* Dashboard responsive */
+    .dashboard-summary {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .summary-card {
+        padding: 15px;
+    }
+
+    .summary-icon {
+        font-size: 2rem;
+    }
+
+    .summary-content h3 {
+        font-size: 0.75rem;
+    }
+
+    .summary-value {
+        font-size: 1.1rem;
+    }
+
+    .summary-change {
+        font-size: 0.75rem;
+    }
+
+    /* Tables responsive */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        min-width: 800px;
+    }
+
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .table-controls .btn,
+    .table-controls .form-select {
+        width: 100%;
+    }
+
+    /* Forms responsive */
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .import-export-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Modal responsive */
+    .modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-header {
+        padding: 15px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .modal-footer {
+        padding: 15px;
+    }
+
+    /* Toast responsive */
+    .toast-container {
+        left: 10px;
+        right: 10px;
+        top: auto;
+        bottom: 20px;
+    }
+
+    .toast {
+        min-width: auto;
+    }
+
+    /* Charts responsive */
+    .chart-container {
+        height: 200px;
+    }
+
+    .analytics-filters {
+        margin-bottom: 15px;
+    }
+
+    .charts-grid {
+        gap: 15px;
+    }
+
+    .chart-card {
+        padding: 15px;
+    }
+
+    .chart-card h3 {
+        font-size: 0.9rem;
+    }
+
+    /* Settings responsive */
+    .settings-section {
+        padding: 15px;
+    }
+
+    .precision-settings {
+        gap: 15px;
+    }
+
+    /* Header responsive */
+    .header-right {
+        gap: 10px;
+    }
+
+    .month-selector {
+        padding: 5px 10px;
+    }
+
+    /* Sidebar nav items */
+    .nav-item {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .sidebar-header h1 {
+        font-size: 1.3rem;
+    }
+
+    /* Action buttons in tables */
+    .action-buttons {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .action-btn {
+        padding: 3px 8px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+    .dashboard-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .summary-icon {
+        margin-bottom: 10px;
+    }
+
+    .btn {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 8px 10px;
+    }
+
+    .form-control {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .header,
+    .btn,
+    .action-buttons,
+    .toast-container,
+    .modal-overlay {
+        display: none !important;
+    }
+
+    #app {
+        height: auto;
+        overflow: visible;
+    }
+
+    .main-content {
+        overflow: visible;
+    }
+
+    .views-container {
+        padding: 0;
+    }
+
+    .view {
+        display: none;
+    }
+
+    .view.active {
+        display: block;
+    }
+
+    .data-table {
+        font-size: 10pt;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 5px 8px;
+    }
+
+    .chart-card {
+        break-inside: avoid;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #000;
+        --text-muted: #333;
+    }
+
+    [data-theme="dark"] {
+        --border-color: #fff;
+        --text-muted: #ccc;
+    }
+
+    .btn {
+        border: 2px solid currentColor;
+    }
+
+    .form-control {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .dashboard-summary {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .modal {
+        max-height: 85vh;
+    }
+}
