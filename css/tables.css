@@ -1,0 +1,280 @@
+/* ============================================
+   Tables CSS
+   ============================================ */
+
+.table-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.table-wrapper {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: auto;
+    max-width: 100%;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table thead {
+    background: var(--bg-tertiary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.data-table th {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+    transition: background 0.2s;
+}
+
+.data-table tbody tr:hover {
+    background: var(--bg-tertiary);
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Column-specific styling */
+.service-col {
+    min-width: 200px;
+    font-weight: 500;
+}
+
+.month-col {
+    text-align: right;
+    min-width: 100px;
+    cursor: pointer;
+    position: relative;
+}
+
+.month-col:hover {
+    background: var(--bg-tertiary);
+}
+
+.total-col {
+    text-align: right;
+    font-weight: 700;
+    background: var(--bg-tertiary);
+    min-width: 120px;
+}
+
+.data-table .numeric {
+    text-align: right;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+}
+
+.data-table .positive {
+    color: var(--danger);
+}
+
+.data-table .negative {
+    color: var(--success);
+}
+
+.data-table .clickable {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.data-table .clickable:hover {
+    color: var(--accent-primary);
+    text-decoration: underline;
+}
+
+/* Cell with detail indicator */
+.cell-with-detail {
+    position: relative;
+}
+
+.cell-with-detail::after {
+    content: '📋';
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.cell-with-detail:hover::after {
+    opacity: 1;
+}
+
+/* Readings table specific */
+.readings-section {
+    margin-top: 30px;
+}
+
+.readings-section h3 {
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+.reading-value {
+    font-weight: 600;
+}
+
+.reading-consumption {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 3px;
+}
+
+.reading-consumption.positive {
+    color: var(--danger);
+}
+
+.reading-consumption.negative {
+    color: var(--success);
+}
+
+/* Status badges */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-success {
+    background: rgba(39, 174, 96, 0.2);
+    color: var(--success);
+}
+
+.badge-warning {
+    background: rgba(243, 156, 18, 0.2);
+    color: var(--warning);
+}
+
+.badge-danger {
+    background: rgba(231, 76, 60, 0.2);
+    color: var(--danger);
+}
+
+.badge-info {
+    background: rgba(26, 188, 156, 0.2);
+    color: var(--info);
+}
+
+.badge-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+/* Action buttons in table */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.action-btn {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.action-btn:hover {
+    background: var(--accent-primary);
+    color: white;
+}
+
+.action-btn.delete:hover {
+    background: var(--danger);
+}
+
+/* Table responsive scroll indicator */
+.table-scroll-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent-primary), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.table-wrapper:hover .table-scroll-indicator {
+    opacity: 1;
+}
+
+/* Category row grouping */
+.category-header {
+    background: var(--bg-tertiary) !important;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.category-header td {
+    padding: 15px;
+    font-size: 0.9rem;
+}
+
+/* Subtotal row */
+.subtotal-row {
+    background: var(--bg-tertiary) !important;
+    font-weight: 600;
+    border-top: 2px solid var(--border-color);
+}
+
+/* Comparison cells */
+.comparison-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.comparison-cell .calculated {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.comparison-cell .actual {
+    font-weight: 600;
+}
+
+.comparison-cell .difference {
+    font-size: 0.75rem;
+}
+
+.comparison-cell .difference.positive {
+    color: var(--danger);
+}
+
+.comparison-cell .difference.negative {
+    color: var(--success);
+}
