@@ -9,6 +9,15 @@ const Modal = {
     bodyEl: null,
     footerEl: null,
     closeBtn: null,
+    isDragging: false,
+    isResizing: false,
+    dragOffsetX: 0,
+    dragOffsetY: 0,
+    resizeStartX: 0,
+    resizeStartY: 0,
+    resizeStartWidth: 0,
+    resizeStartHeight: 0,
+    currentConfig: null,
 
     /**
      * Инициализация модального окна
@@ -39,6 +48,185 @@ const Modal = {
                 this.close();
             }
         });
+
+        // Обработка Enter для выполнения основного действия
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && this.overlay.classList.contains('active')) {
+                e.preventDefault();
+                this.handleEnterAction();
+            }
+        });
+
+        // Инициализация перетаскивания и изменения размера
+        this.initDraggable();
+        this.initResizable();
+    },
+
+    /**
+     * Инициализация перетаскивания
+     */
+    initDraggable() {
+        const header = this.modal.querySelector('.modal-header');
+        
+        // Начало перетаскивания
+        header.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.modal-close')) return;
+            
+            this.isDragging = true;
+            
+            // Сохраняем текущие размеры перед перетаскиванием
+            const rect = this.modal.getBoundingClientRect();
+            const overlayRect = this.overlay.getBoundingClientRect();
+            
+            // Устанавливаем абсолютное позиционирование с сохранением размеров
+            this.modal.style.width = `${rect.width}px`;
+            this.modal.style.height = `${rect.height}px`;
+            this.modal.classList.add('draggable');
+            this.modal.style.left = `${rect.left - overlayRect.left}px`;
+            this.modal.style.top = `${rect.top - overlayRect.top}px`;
+            this.modal.style.maxWidth = 'none';
+            this.modal.style.maxHeight = 'none';
+            this.modal.style.margin = '0';
+            
+            this.dragOffsetX = e.clientX - rect.left;
+            this.dragOffsetY = e.clientY - rect.top;
+            
+            e.preventDefault();
+        });
+
+        // Перетаскивание
+        document.addEventListener('mousemove', (e) => {
+            if (this.isDragging) {
+                const overlayRect = this.overlay.getBoundingClientRect();
+                const modalRect = this.modal.getBoundingClientRect();
+                
+                let newLeft = e.clientX - overlayRect.left - this.dragOffsetX;
+                let newTop = e.clientY - overlayRect.top - this.dragOffsetY;
+                
+                // Ограничение границами оверлея
+                const maxLeft = overlayRect.width - modalRect.width;
+                const maxTop = overlayRect.height - modalRect.height;
+                
+                newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+                newTop = Math.max(0, Math.min(newTop, maxTop));
+                
+                this.modal.style.left = `${newLeft}px`;
+                this.modal.style.top = `${newTop}px`;
+            }
+        });
+
+        // Конец перетаскивания
+        document.addEventListener('mouseup', () => {
+            this.isDragging = false;
+        });
+    },
+
+    /**
+     * Инициализация изменения размера
+     */
+    initResizable() {
+        const resizeHandle = this.modal.querySelector('.modal-resize-handle');
+        
+        if (!resizeHandle) return;
+        
+        // Начало изменения размера
+        resizeHandle.addEventListener('mousedown', (e) => {
+            this.isResizing = true;
+            
+            const rect = this.modal.getBoundingClientRect();
+            this.resizeStartX = e.clientX;
+            this.resizeStartY = e.clientY;
+            this.resizeStartWidth = rect.width;
+            this.resizeStartHeight = rect.height;
+            
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        // Изменение размера
+        document.addEventListener('mousemove', (e) => {
+            if (this.isResizing) {
+                const deltaX = e.clientX - this.resizeStartX;
+                const deltaY = e.clientY - this.resizeStartY;
+                
+                const newWidth = this.resizeStartWidth + deltaX;
+                const newHeight = this.resizeStartHeight + deltaY;
+                
+                // Ограничения минимального и максимального размера
+                // Используем индивидуальные настройки из конфигурации или значения по умолчанию
+                const minWidth = this.currentConfig?.minWidth || 300;
+                const minHeight = this.currentConfig?.minHeight || 200;
+                const maxWidth = this.overlay.clientWidth - 50;
+                const maxHeight = this.overlay.clientHeight - 50;
+                
+                const constrainedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+                const constrainedHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+                
+                this.modal.style.width = `${constrainedWidth}px`;
+                this.modal.style.height = `${constrainedHeight}px`;
+            }
+        });
+
+        // Конец изменения размера
+        document.addEventListener('mouseup', () => {
+            this.isResizing = false;
+        });
+    },
+
+    /**
+     * Обработка нажатия Enter - выполнение основного действия
+     */
+    handleEnterAction() {
+        // Проверяем обязательные поля перед выполнением действия
+        if (!this.validateRequiredFields()) {
+            return;
+        }
+        
+        // Ищем первую кнопку с классом btn-primary (основное действие)
+        const primaryBtn = this.footerEl.querySelector('.btn-primary');
+        if (primaryBtn) {
+            primaryBtn.click();
+            return;
+        }
+        
+        // Если нет кнопки btn-primary, ищем любую кнопку в футере
+        const anyBtn = this.footerEl.querySelector('button');
+        if (anyBtn) {
+            anyBtn.click();
+            return;
+        }
+        
+        // Если кнопок нет, ищем форму и отправляем её
+        const form = this.bodyEl.querySelector('form');
+        if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+    },
+
+    /**
+     * Проверка обязательных полей
+     */
+    validateRequiredFields() {
+        const requiredFields = this.currentConfig?.requiredFields || [];
+        let isValid = true;
+        
+        // Очищаем предыдущие ошибки
+        this.clearErrors();
+        
+        requiredFields.forEach(field => {
+            const input = this.bodyEl.querySelector(`[name="${field}"]`);
+            if (input) {
+                const value = input.type === 'checkbox' ? input.checked : input.value;
+                
+                // Проверка на пустое значение
+                if (!value || (typeof value === 'string' && value.trim() === '')) {
+                    this.showError(field, 'Это поле обязательно для заполнения');
+                    isValid = false;
+                }
+            }
+        });
+        
+        return isValid;
     },
 
     /**
@@ -49,11 +237,35 @@ const Modal = {
             title = '',
             content = '',
             buttons = [],
-            onClose = null
+            onClose = null,
+            minWidth = 300,
+            minHeight = 200,
+            requiredFields = []
         } = options;
+
+        // Сохраняем конфигурацию для текущего модального окна
+        this.currentConfig = {
+            minWidth: minWidth,
+            minHeight: minHeight,
+            requiredFields: requiredFields
+        };
 
         this.titleEl.textContent = title;
         this.bodyEl.innerHTML = content;
+        
+        // Сбрасываем стили размеров и устанавливаем индивидуальные минимальные размеры
+        this.modal.style.width = '';
+        this.modal.style.height = '';
+        this.modal.style.minWidth = `${minWidth}px`;
+        this.modal.style.minHeight = `${minHeight}px`;
+        this.modal.style.maxWidth = '90vw';
+        this.modal.style.maxHeight = '90vh';
+        
+        // Сбрасываем позиции для центрирования
+        this.modal.style.left = '';
+        this.modal.style.top = '';
+        this.modal.style.margin = 'auto';
+        this.modal.classList.remove('draggable');
         
         // Создаем кнопки
         this.footerEl.innerHTML = '';
@@ -62,6 +274,11 @@ const Modal = {
             button.className = `btn ${btn.class || 'btn-secondary'}`;
             button.textContent = btn.text;
             button.addEventListener('click', () => {
+                // Проверяем обязательные поля перед выполнением действия
+                if (btn.class?.includes('btn-primary') && !this.validateRequiredFields()) {
+                    return;
+                }
+                
                 if (btn.onClick) {
                     btn.onClick();
                 }

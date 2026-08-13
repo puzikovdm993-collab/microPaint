@@ -475,9 +475,17 @@ td {
     border-radius: var(--radius-lg);
     width: 100%;
     max-width: 500px;
+    min-width: 300px;
+    min-height: 200px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: var(--shadow-lg);
+    position: relative;
+}
+
+.modal.draggable {
+    position: absolute;
+    max-width: none !important;
 }
 
 .modal-header {
@@ -486,6 +494,7 @@ td {
     align-items: center;
     padding: 20px 24px;
     border-bottom: 1px solid var(--border-color);
+    cursor: move;
 }
 
 .modal-header h3 {
@@ -511,6 +520,17 @@ td {
     gap: 12px;
     padding: 16px 24px;
     border-top: 1px solid var(--border-color);
+}
+
+.modal-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    cursor: nwse-resize;
+    background: linear-gradient(135deg, transparent 50%, var(--border-color) 50%);
+    border-bottom-right-radius: var(--radius-lg);
 }
 
 /* ========================================
