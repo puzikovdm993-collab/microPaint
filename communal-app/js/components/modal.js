@@ -132,7 +132,6 @@ const Modal = {
         // Начало изменения размера
         resizeHandle.addEventListener('mousedown', (e) => {
             this.isResizing = true;
-            this.modal.classList.add('draggable');
             
             const rect = this.modal.getBoundingClientRect();
             this.resizeStartX = e.clientX;
