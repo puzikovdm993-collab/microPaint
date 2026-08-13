@@ -17,6 +17,7 @@ const Modal = {
     resizeStartY: 0,
     resizeStartWidth: 0,
     resizeStartHeight: 0,
+    currentConfig: null,
 
     /**
      * Инициализация модального окна
@@ -152,8 +153,9 @@ const Modal = {
                 const newHeight = this.resizeStartHeight + deltaY;
                 
                 // Ограничения минимального и максимального размера
-                const minWidth = 300;
-                const minHeight = 200;
+                // Используем индивидуальные настройки из конфигурации или значения по умолчанию
+                const minWidth = this.currentConfig?.minWidth || 300;
+                const minHeight = this.currentConfig?.minHeight || 200;
                 const maxWidth = this.overlay.clientWidth - 50;
                 const maxHeight = this.overlay.clientHeight - 50;
                 
@@ -175,6 +177,11 @@ const Modal = {
      * Обработка нажатия Enter - выполнение основного действия
      */
     handleEnterAction() {
+        // Проверяем обязательные поля перед выполнением действия
+        if (!this.validateRequiredFields()) {
+            return;
+        }
+        
         // Ищем первую кнопку с классом btn-primary (основное действие)
         const primaryBtn = this.footerEl.querySelector('.btn-primary');
         if (primaryBtn) {
@@ -197,6 +204,32 @@ const Modal = {
     },
 
     /**
+     * Проверка обязательных полей
+     */
+    validateRequiredFields() {
+        const requiredFields = this.currentConfig?.requiredFields || [];
+        let isValid = true;
+        
+        // Очищаем предыдущие ошибки
+        this.clearErrors();
+        
+        requiredFields.forEach(field => {
+            const input = this.bodyEl.querySelector(`[name="${field}"]`);
+            if (input) {
+                const value = input.type === 'checkbox' ? input.checked : input.value;
+                
+                // Проверка на пустое значение
+                if (!value || (typeof value === 'string' && value.trim() === '')) {
+                    this.showError(field, 'Это поле обязательно для заполнения');
+                    isValid = false;
+                }
+            }
+        });
+        
+        return isValid;
+    },
+
+    /**
      * Открытие модального окна
      */
     open(options = {}) {
@@ -204,11 +237,27 @@ const Modal = {
             title = '',
             content = '',
             buttons = [],
-            onClose = null
+            onClose = null,
+            minWidth,
+            minHeight,
+            requiredFields = []
         } = options;
+
+        // Сохраняем конфигурацию для текущего модального окна
+        this.currentConfig = {
+            minWidth: minWidth || 300,
+            minHeight: minHeight || 200,
+            requiredFields: requiredFields
+        };
 
         this.titleEl.textContent = title;
         this.bodyEl.innerHTML = content;
+        
+        // Сбрасываем стили размеров к значениям по умолчанию
+        this.modal.style.width = '';
+        this.modal.style.height = '';
+        this.modal.style.minWidth = `${this.currentConfig.minWidth}px`;
+        this.modal.style.minHeight = `${this.currentConfig.minHeight}px`;
         
         // Создаем кнопки
         this.footerEl.innerHTML = '';
@@ -217,6 +266,11 @@ const Modal = {
             button.className = `btn ${btn.class || 'btn-secondary'}`;
             button.textContent = btn.text;
             button.addEventListener('click', () => {
+                // Проверяем обязательные поля перед выполнением действия
+                if (btn.class?.includes('btn-primary') && !this.validateRequiredFields()) {
+                    return;
+                }
+                
                 if (btn.onClick) {
                     btn.onClick();
                 }
