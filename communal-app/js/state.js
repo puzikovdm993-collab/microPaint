@@ -97,12 +97,12 @@ const AppState = {
             { id: 'svc_el_io', name: 'Эл ИО (электроэнергия общедомовая)', category: 'electricity', unit: 'кВт⋅ч', calcType: 'volume', active: true },
             { id: 'svc_tko', name: 'ТКО (вывоз мусора)', category: 'trash', unit: 'м³', calcType: 'fixed', active: true },
             { id: 'svc_vo', name: 'ВО (водоотведение)', category: 'sewage', unit: 'м³', calcType: 'volume_sum', active: true },
-            { id: 'svc_xv', name: 'ХВ (холодная вода)', category: 'water_cold', unit: 'м³', calcType: 'volume_sum', active: true },
-            { id: 'svc_xv_gv', name: 'ХВ для ГВ (подогрев воды)', category: 'water_cold', unit: 'м³', calcType: 'volume', active: true },
+            { id: 'svc_xv', name: 'ХВ (холодная вода)', category: 'water_cold', unit: 'м³', calcType: 'meter', active: true },
+            { id: 'svc_xv_gv', name: 'ХВ для ГВ (подогрев воды)', category: 'water_cold', unit: 'м³', calcType: 'meter', active: true },
             { id: 'svc_heat_gv', name: 'Теплоэнергия для ГВ', category: 'heating', unit: 'Гкал', calcType: 'volume', active: true },
             { id: 'svc_heating', name: 'Отопление', category: 'heating', unit: 'Гкал', calcType: 'volume', active: true },
             { id: 'svc_phone', name: 'Телефон', category: 'communication', unit: 'мес', calcType: 'fixed', active: true },
-            { id: 'svc_el', name: 'Эл (электроэнергия)', category: 'electricity', unit: 'кВт⋅ч', calcType: 'volume_sum', active: true }
+            { id: 'svc_el', name: 'Эл (электроэнергия)', category: 'electricity', unit: 'кВт⋅ч', calcType: 'meter', active: true }
         ];
 
         // Создаем тарифы на основе данных (период 02.2026 - 07.2026)
@@ -334,6 +334,7 @@ const AppState = {
      */
     getServiceVolumes(monthStr, serviceId) {
         // Данные объемов и начислений из таблицы пользователя
+        // Примечание: svc_xv, svc_xv_gv и svc_el теперь имеют calcType: 'meter' и рассчитываются по счетчикам
         const serviceData = {
             'svc_gv_io': { volumes: { '2026-02': 0.405277, '2026-03': 0.405277, '2026-04': 0.405277, '2026-05': 0.405277, '2026-06': 0.405277, '2026-07': 0.405277 } },
             'svc_xv_io': { volumes: { '2026-02': 0.378076, '2026-03': 0.378076, '2026-04': 0.378076, '2026-05': 0.378076, '2026-06': 0.378076, '2026-07': 0.378076 } },
@@ -341,11 +342,8 @@ const AppState = {
             'svc_el_io': { volumes: { '2026-02': 32.0907897, '2026-03': 31.14223, '2026-04': 31.14223, '2026-05': 31.14223, '2026-06': 31.14223, '2026-07': 31.14223 } },
             'svc_tko': { volumes: { '2026-02': 0.174, '2026-03': 0.174, '2026-04': 0.174, '2026-05': 0.174, '2026-06': 0.174, '2026-07': 0.174 } },
             'svc_vo': { volumes: { '2026-02': 8.324, '2026-03': 10.419, '2026-04': 9.097, '2026-05': 9.585, '2026-06': 4.357, '2026-07': 7.368 } },
-            'svc_xv': { volumes: { '2026-02': 5.924, '2026-03': 7.91, '2026-04': 6.287, '2026-05': 6.518, '2026-06': 2.48, '2026-07': 5.571 } },
-            'svc_xv_gv': { volumes: { '2026-02': 2.4, '2026-03': 2.509, '2026-04': 2.81, '2026-05': 3.067, '2026-06': 1.877, '2026-07': 1.797 } },
             'svc_heat_gv': { volumes: { '2026-02': 0.112, '2026-03': 0.117, '2026-04': 0.131, '2026-05': 0.143, '2026-06': 0.088, '2026-07': 0.084 } },
-            'svc_heating': { volumes: { '2026-02': 1.742, '2026-03': 1.411, '2026-04': 0.882, '2026-05': 0.547, '2026-06': 0, '2026-07': 0 } },
-            'svc_el': { volumes: { '2026-02': 0, '2026-03': 505, '2026-04': 651, '2026-05': 821, '2026-06': 898, '2026-07': 0 } }
+            'svc_heating': { volumes: { '2026-02': 1.742, '2026-03': 1.411, '2026-04': 0.882, '2026-05': 0.547, '2026-06': 0, '2026-07': 0 } }
         };
 
         const data = serviceData[serviceId];
