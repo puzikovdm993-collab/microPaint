@@ -149,8 +149,8 @@ const Modal = {
                 const deltaX = e.clientX - this.resizeStartX;
                 const deltaY = e.clientY - this.resizeStartY;
                 
-                const newWidth = this.resizeStartWidth + deltaX;
-                const newHeight = this.resizeStartHeight + deltaY;
+                let newWidth = this.resizeStartWidth + deltaX;
+                let newHeight = this.resizeStartHeight + deltaY;
                 
                 // Ограничения минимального и максимального размера
                 // Используем индивидуальные настройки из конфигурации или значения по умолчанию
@@ -159,11 +159,11 @@ const Modal = {
                 const maxWidth = this.overlay.clientWidth - 50;
                 const maxHeight = this.overlay.clientHeight - 50;
                 
-                const constrainedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
-                const constrainedHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+                newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+                newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
                 
-                this.modal.style.width = `${constrainedWidth}px`;
-                this.modal.style.height = `${constrainedHeight}px`;
+                this.modal.style.width = `${newWidth}px`;
+                this.modal.style.height = `${newHeight}px`;
             }
         });
 
