@@ -48,6 +48,14 @@ const Modal = {
             }
         });
 
+        // Обработка Enter для выполнения основного действия
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && this.overlay.classList.contains('active')) {
+                e.preventDefault();
+                this.handleEnterAction();
+            }
+        });
+
         // Инициализация перетаскивания и изменения размера
         this.initDraggable();
         this.initResizable();
@@ -161,6 +169,31 @@ const Modal = {
         document.addEventListener('mouseup', () => {
             this.isResizing = false;
         });
+    },
+
+    /**
+     * Обработка нажатия Enter - выполнение основного действия
+     */
+    handleEnterAction() {
+        // Ищем первую кнопку с классом btn-primary (основное действие)
+        const primaryBtn = this.footerEl.querySelector('.btn-primary');
+        if (primaryBtn) {
+            primaryBtn.click();
+            return;
+        }
+        
+        // Если нет кнопки btn-primary, ищем любую кнопку в футере
+        const anyBtn = this.footerEl.querySelector('button');
+        if (anyBtn) {
+            anyBtn.click();
+            return;
+        }
+        
+        // Если кнопок нет, ищем форму и отправляем её
+        const form = this.bodyEl.querySelector('form');
+        if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
     },
 
     /**
