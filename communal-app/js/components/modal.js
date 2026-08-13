@@ -9,6 +9,14 @@ const Modal = {
     bodyEl: null,
     footerEl: null,
     closeBtn: null,
+    isDragging: false,
+    isResizing: false,
+    dragOffsetX: 0,
+    dragOffsetY: 0,
+    resizeStartX: 0,
+    resizeStartY: 0,
+    resizeStartWidth: 0,
+    resizeStartHeight: 0,
 
     /**
      * Инициализация модального окна
@@ -38,6 +46,111 @@ const Modal = {
             if (e.key === 'Escape' && this.overlay.classList.contains('active')) {
                 this.close();
             }
+        });
+
+        // Инициализация перетаскивания и изменения размера
+        this.initDraggable();
+        this.initResizable();
+    },
+
+    /**
+     * Инициализация перетаскивания
+     */
+    initDraggable() {
+        const header = this.modal.querySelector('.modal-header');
+        
+        // Начало перетаскивания
+        header.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.modal-close')) return;
+            
+            this.isDragging = true;
+            this.modal.classList.add('draggable');
+            
+            const rect = this.modal.getBoundingClientRect();
+            const overlayRect = this.overlay.getBoundingClientRect();
+            
+            this.dragOffsetX = e.clientX - rect.left;
+            this.dragOffsetY = e.clientY - rect.top;
+            
+            e.preventDefault();
+        });
+
+        // Перетаскивание
+        document.addEventListener('mousemove', (e) => {
+            if (this.isDragging) {
+                const overlayRect = this.overlay.getBoundingClientRect();
+                const modalRect = this.modal.getBoundingClientRect();
+                
+                let newLeft = e.clientX - overlayRect.left - this.dragOffsetX;
+                let newTop = e.clientY - overlayRect.top - this.dragOffsetY;
+                
+                // Ограничение границами оверлея
+                const maxLeft = overlayRect.width - modalRect.width;
+                const maxTop = overlayRect.height - modalRect.height;
+                
+                newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+                newTop = Math.max(0, Math.min(newTop, maxTop));
+                
+                this.modal.style.left = `${newLeft}px`;
+                this.modal.style.top = `${newTop}px`;
+            }
+        });
+
+        // Конец перетаскивания
+        document.addEventListener('mouseup', () => {
+            this.isDragging = false;
+        });
+    },
+
+    /**
+     * Инициализация изменения размера
+     */
+    initResizable() {
+        const resizeHandle = this.modal.querySelector('.modal-resize-handle');
+        
+        if (!resizeHandle) return;
+        
+        // Начало изменения размера
+        resizeHandle.addEventListener('mousedown', (e) => {
+            this.isResizing = true;
+            this.modal.classList.add('draggable');
+            
+            const rect = this.modal.getBoundingClientRect();
+            this.resizeStartX = e.clientX;
+            this.resizeStartY = e.clientY;
+            this.resizeStartWidth = rect.width;
+            this.resizeStartHeight = rect.height;
+            
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        // Изменение размера
+        document.addEventListener('mousemove', (e) => {
+            if (this.isResizing) {
+                const deltaX = e.clientX - this.resizeStartX;
+                const deltaY = e.clientY - this.resizeStartY;
+                
+                const newWidth = this.resizeStartWidth + deltaX;
+                const newHeight = this.resizeStartHeight + deltaY;
+                
+                // Ограничения минимального и максимального размера
+                const minWidth = 300;
+                const minHeight = 200;
+                const maxWidth = this.overlay.clientWidth - 50;
+                const maxHeight = this.overlay.clientHeight - 50;
+                
+                const constrainedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+                const constrainedHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+                
+                this.modal.style.width = `${constrainedWidth}px`;
+                this.modal.style.height = `${constrainedHeight}px`;
+            }
+        });
+
+        // Конец изменения размера
+        document.addEventListener('mouseup', () => {
+            this.isResizing = false;
         });
     },
 
