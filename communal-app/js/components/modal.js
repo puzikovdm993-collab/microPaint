@@ -64,10 +64,19 @@ const Modal = {
             if (e.target.closest('.modal-close')) return;
             
             this.isDragging = true;
-            this.modal.classList.add('draggable');
             
+            // Сохраняем текущие размеры перед перетаскиванием
             const rect = this.modal.getBoundingClientRect();
             const overlayRect = this.overlay.getBoundingClientRect();
+            
+            // Устанавливаем абсолютное позиционирование с сохранением размеров и позиции
+            this.modal.style.width = `${rect.width}px`;
+            this.modal.style.height = `${rect.height}px`;
+            this.modal.classList.add('draggable');
+            this.modal.style.left = `${rect.left - overlayRect.left}px`;
+            this.modal.style.top = `${rect.top - overlayRect.top}px`;
+            this.modal.style.maxWidth = 'none';
+            this.modal.style.maxHeight = 'none';
             
             this.dragOffsetX = e.clientX - rect.left;
             this.dragOffsetY = e.clientY - rect.top;

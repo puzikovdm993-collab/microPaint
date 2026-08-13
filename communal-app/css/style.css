@@ -481,12 +481,11 @@ td {
     overflow-y: auto;
     box-shadow: var(--shadow-lg);
     position: relative;
-    resize: both;
 }
 
 .modal.draggable {
     position: absolute;
-    max-width: none;
+    max-width: none !important;
 }
 
 .modal-header {
