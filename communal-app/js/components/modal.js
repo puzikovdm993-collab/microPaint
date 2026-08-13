@@ -78,7 +78,7 @@ const Modal = {
             const rect = this.modal.getBoundingClientRect();
             const overlayRect = this.overlay.getBoundingClientRect();
             
-            // Устанавливаем абсолютное позиционирование с сохранением размеров и позиции
+            // Устанавливаем абсолютное позиционирование с сохранением размеров
             this.modal.style.width = `${rect.width}px`;
             this.modal.style.height = `${rect.height}px`;
             this.modal.classList.add('draggable');
@@ -86,6 +86,7 @@ const Modal = {
             this.modal.style.top = `${rect.top - overlayRect.top}px`;
             this.modal.style.maxWidth = 'none';
             this.modal.style.maxHeight = 'none';
+            this.modal.style.margin = '0';
             
             this.dragOffsetX = e.clientX - rect.left;
             this.dragOffsetY = e.clientY - rect.top;
@@ -238,26 +239,34 @@ const Modal = {
             content = '',
             buttons = [],
             onClose = null,
-            minWidth,
-            minHeight,
+            minWidth = 300,
+            minHeight = 200,
             requiredFields = []
         } = options;
 
         // Сохраняем конфигурацию для текущего модального окна
         this.currentConfig = {
-            minWidth: minWidth || 300,
-            minHeight: minHeight || 200,
+            minWidth: minWidth,
+            minHeight: minHeight,
             requiredFields: requiredFields
         };
 
         this.titleEl.textContent = title;
         this.bodyEl.innerHTML = content;
         
-        // Сбрасываем стили размеров к значениям по умолчанию
+        // Сбрасываем стили размеров и устанавливаем индивидуальные минимальные размеры
         this.modal.style.width = '';
         this.modal.style.height = '';
-        this.modal.style.minWidth = `${this.currentConfig.minWidth}px`;
-        this.modal.style.minHeight = `${this.currentConfig.minHeight}px`;
+        this.modal.style.minWidth = `${minWidth}px`;
+        this.modal.style.minHeight = `${minHeight}px`;
+        this.modal.style.maxWidth = '90vw';
+        this.modal.style.maxHeight = '90vh';
+        
+        // Сбрасываем позиции для центрирования
+        this.modal.style.left = '';
+        this.modal.style.top = '';
+        this.modal.style.margin = 'auto';
+        this.modal.classList.remove('draggable');
         
         // Создаем кнопки
         this.footerEl.innerHTML = '';

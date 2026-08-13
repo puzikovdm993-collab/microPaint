@@ -185,6 +185,9 @@ const MetersUI = {
         Modal.open({
             title: 'Добавить счетчик',
             content,
+            minWidth: 450,
+            minHeight: 300,
+            requiredFields: ['serviceId', 'name', 'number', 'unit'],
             buttons: [
                 { text: 'Отмена', class: 'btn-secondary' },
                 { 
@@ -266,6 +269,9 @@ const MetersUI = {
         Modal.open({
             title: 'Редактировать счетчик',
             content,
+            minWidth: 450,
+            minHeight: 300,
+            requiredFields: ['serviceId', 'name', 'number', 'unit'],
             buttons: [
                 { text: 'Отмена', class: 'btn-secondary' },
                 { 
@@ -340,6 +346,9 @@ const MetersUI = {
         Modal.open({
             title: 'Внести показания',
             content,
+            minWidth: 400,
+            minHeight: 280,
+            requiredFields: ['meterId', 'date', 'value'],
             buttons: [
                 { text: 'Отмена', class: 'btn-secondary' },
                 { 
