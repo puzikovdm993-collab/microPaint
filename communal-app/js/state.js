@@ -73,153 +73,132 @@ const AppState = {
     },
 
     /**
-     * Создание демонстрационных данных
+     * Создание демонстрационных данных на основе реальных данных пользователя
      */
     createDemoData() {
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth();
-
-        // Создаем услуги
-        this.data.services = [
-            { id: 'svc_1', name: 'Электроэнергия', category: 'electricity', unit: 'кВт⋅ч', calcType: 'meter', active: true },
-            { id: 'svc_2', name: 'Холодная вода', category: 'water_cold', unit: 'м³', calcType: 'meter', active: true },
-            { id: 'svc_3', name: 'Горячая вода', category: 'water_hot', unit: 'м³', calcType: 'meter', active: true },
-            { id: 'svc_4', name: 'Газ', category: 'gas', unit: 'м³', calcType: 'meter', active: true },
-            { id: 'svc_5', name: 'Отопление', category: 'heating', unit: 'Гкал', calcType: 'area', active: true },
-            { id: 'svc_6', name: 'Водоотведение', category: 'sewage', unit: 'м³', calcType: 'volume', active: true },
-            { id: 'svc_7', name: 'Вывоз мусора', category: 'trash', unit: 'чел', calcType: 'residents', active: true },
-            { id: 'svc_8', name: 'Интернет', category: 'internet', unit: 'мес', calcType: 'fixed', active: true }
-        ];
-
-        // Создаем тарифы (история изменений)
-        const tariffHistory = [];
-        
-        // Электроэнергия - несколько изменений тарифа
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_1', rate: 4.50, validFrom: `${currentYear - 1}-01-01` },
-            { id: Utils.generateId(), serviceId: 'svc_1', rate: 5.20, validFrom: `${currentYear}-01-01` },
-            { id: Utils.generateId(), serviceId: 'svc_1', rate: 5.80, validFrom: `${currentYear}-07-01` }
-        );
-
-        // Вода
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_2', rate: 35.50, validFrom: `${currentYear - 1}-01-01` },
-            { id: Utils.generateId(), serviceId: 'svc_2', rate: 38.20, validFrom: `${currentYear}-01-01` }
-        );
-
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_3', rate: 180.00, validFrom: `${currentYear - 1}-01-01` },
-            { id: Utils.generateId(), serviceId: 'svc_3', rate: 195.50, validFrom: `${currentYear}-01-01` }
-        );
-
-        // Газ
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_4', rate: 7.20, validFrom: `${currentYear - 1}-01-01` }
-        );
-
-        // Отопление
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_5', rate: 2100.00, validFrom: `${currentYear - 1}-01-01` }
-        );
-
-        // Водоотведение
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_6', rate: 28.50, validFrom: `${currentYear - 1}-01-01` }
-        );
-
-        // Вывоз мусора
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_7', rate: 150.00, validFrom: `${currentYear - 1}-01-01` }
-        );
-
-        // Интернет
-        tariffHistory.push(
-            { id: Utils.generateId(), serviceId: 'svc_8', rate: 450.00, validFrom: `${currentYear - 1}-01-01` }
-        );
-
-        this.data.tariffs = tariffHistory;
-
-        // Создаем счетчики
-        this.data.meters = [
-            { id: 'mtr_1', serviceId: 'svc_1', name: 'Электроэнергия', number: 'ЭЛ123456789', unit: 'кВт⋅ч', type: 'single', canReset: false },
-            { id: 'mtr_2', serviceId: 'svc_2', name: 'Холодная вода', number: 'ХВ987654321', unit: 'м³', type: 'cold', canReset: false },
-            { id: 'mtr_3', serviceId: 'svc_3', name: 'Горячая вода', number: 'ГВ456789123', unit: 'м³', type: 'hot', canReset: false },
-            { id: 'mtr_4', serviceId: 'svc_4', name: 'Газ', number: 'ГЗ789123456', unit: 'м³', type: 'gas', canReset: false }
-        ];
-
-        // Генерируем показания за последние 12 месяцев
-        const readings = [];
-        const baseReadings = {
-            'mtr_1': 12000,  // Электроэнергия
-            'mtr_2': 450,    // Холодная вода
-            'mtr_3': 320,    // Горячая вода
-            'mtr_4': 850     // Газ
-        };
-
-        const consumptionRates = {
-            'mtr_1': { avg: 180, variance: 40 },  // кВт⋅ч в месяц
-            'mtr_2': { avg: 5, variance: 2 },      // м³ в месяц
-            'mtr_3': { avg: 3, variance: 1.5 },    // м³ в месяц
-            'mtr_4': { avg: 12, variance: 5 }      // м³ в месяц
-        };
-
-        for (let i = 12; i >= 0; i--) {
-            const date = Utils.subtractMonths(now, i);
-            const monthStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            const day = Math.min(25, date.getDate());
-            const readingDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-            this.data.meters.forEach(meter => {
-                const rate = consumptionRates[meter.id];
-                const consumption = rate.avg + (Math.random() - 0.5) * 2 * rate.variance;
-                baseReadings[meter.id] += consumption;
-
-                readings.push({
-                    id: Utils.generateId(),
-                    meterId: meter.id,
-                    serviceId: meter.serviceId,
-                    date: readingDate,
-                    value: Utils.round2(baseReadings[meter.id]),
-                    comment: ''
-                });
-            });
-        }
-
-        this.data.readings = readings;
-
-        // Генерируем платежи
-        const payments = [];
-        for (let i = 11; i >= 0; i--) {
-            const date = Utils.subtractMonths(now, i);
-            const monthStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            
-            // Примерная сумма платежей
-            const baseAmount = 4500 + Math.random() * 1500;
-            
-            payments.push({
-                id: Utils.generateId(),
-                date: Utils.formatDate(Utils.addMonths(date, 10), 'input'),
-                period: monthStr,
-                amount: Utils.round2(baseAmount),
-                services: 'all',
-                method: ['card', 'transfer', 'cash'][Math.floor(Math.random() * 3)],
-                comment: ''
-            });
-        }
-
-        this.data.payments = payments;
-
-        // Настройки
+        // Настройки - площадь 59.2 м² из данных
         this.data.settings = {
-            propertyName: 'Дом на Ленина',
-            area: 65,
+            propertyName: 'Квартира',
+            area: 59.2,
             residents: 3,
             currency: 'RUB',
             paymentDeadlineDay: 10,
             anomalyThreshold: 20,
             forecastMonths: 3
         };
+
+        // Создаем услуги на основе данных
+        // ОИ - общего использования, ГВ - горячая вода, ХВ - холодная вода, ВО - водоотведение, Эл - электроэнергия
+        this.data.services = [
+            { id: 'svc_content', name: 'Содержание жилья', category: 'maintenance', unit: 'м²', calcType: 'area', active: true },
+            { id: 'svc_gv_io', name: 'ГВ ИО (горячая вода общедомовая)', category: 'water_hot', unit: 'м³', calcType: 'volume', active: true },
+            { id: 'svc_xv_io', name: 'ХВ ИО (холодная вода общедомовая)', category: 'water_cold', unit: 'м³', calcType: 'volume', active: true },
+            { id: 'svc_vo_io', name: 'ВО ИО (водоотведение общедомовое)', category: 'sewage', unit: 'м³', calcType: 'volume', active: true },
+            { id: 'svc_el_io', name: 'Эл ИО (электроэнергия общедомовая)', category: 'electricity', unit: 'кВт⋅ч', calcType: 'volume', active: true },
+            { id: 'svc_tko', name: 'ТКО (вывоз мусора)', category: 'trash', unit: 'м³', calcType: 'fixed', active: true },
+            { id: 'svc_vo', name: 'ВО (водоотведение)', category: 'sewage', unit: 'м³', calcType: 'volume_sum', active: true },
+            { id: 'svc_xv', name: 'ХВ (холодная вода)', category: 'water_cold', unit: 'м³', calcType: 'meter', active: true },
+            { id: 'svc_xv_gv', name: 'ХВ для ГВ (подогрев воды)', category: 'water_cold', unit: 'м³', calcType: 'meter', active: true },
+            { id: 'svc_heat_gv', name: 'Теплоэнергия для ГВ', category: 'heating', unit: 'Гкал', calcType: 'volume', active: true },
+            { id: 'svc_heating', name: 'Отопление', category: 'heating', unit: 'Гкал', calcType: 'volume', active: true },
+            { id: 'svc_phone', name: 'Телефон', category: 'communication', unit: 'мес', calcType: 'fixed', active: true },
+            { id: 'svc_el', name: 'Эл (электроэнергия)', category: 'electricity', unit: 'кВт⋅ч', calcType: 'meter', active: true }
+        ];
+
+        // Создаем тарифы на основе данных (период 02.2026 - 07.2026)
+        const tariffHistory = [];
+        
+        // Содержание жилья - 43.42 руб/м²
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_content', rate: 43.42, validFrom: '2026-01-01' });
+        
+        // ГВ ИО - 126.04 руб/м³
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_gv_io', rate: 126.04, validFrom: '2026-01-01' });
+        
+        // ХВ ИО - 29.86 руб/м³
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_xv_io', rate: 29.86, validFrom: '2026-01-01' });
+        
+        // ВО ИО - 37.19 руб/м³
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_vo_io', rate: 37.19, validFrom: '2026-01-01' });
+        
+        // Эл ИО - 3.39 руб/кВт⋅ч
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_el_io', rate: 3.39, validFrom: '2026-01-01' });
+        
+        // ТКО - 552.61 руб/м³
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_tko', rate: 552.61, validFrom: '2026-01-01' });
+        
+        // ВО (водоотведение) - 37.19 руб/м³
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_vo', rate: 37.19, validFrom: '2026-01-01' });
+        
+        // ХВ (холодная вода) - 29.58 руб/м³ (до 04.2026), затем 29.58, 30.98 с 05.2026, 31.71 с 06.2026
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_xv', rate: 29.58, validFrom: '2026-01-01' });
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_xv_gv', rate: 29.58, validFrom: '2026-01-01' });
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_xv_gv', rate: 30.98, validFrom: '2026-05-01' });
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_xv_gv', rate: 31.71, validFrom: '2026-06-01' });
+        // Обновление тарифа на ХВ с 06.2026
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_xv', rate: 31.71, validFrom: '2026-06-01' });
+        
+        // Теплоэнергия для ГВ и Отопление - 2021.2 руб/Гкал
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_heat_gv', rate: 2021.2, validFrom: '2026-01-01' });
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_heating', rate: 2021.2, validFrom: '2026-01-01' });
+        
+        // Телефон - 358 руб/мес
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_phone', rate: 358.0, validFrom: '2026-07-01' });
+        
+        // Эл (электроэнергия) - 3.39 руб/кВт⋅ч
+        tariffHistory.push({ id: Utils.generateId(), serviceId: 'svc_el', rate: 3.39, validFrom: '2026-01-01' });
+
+        this.data.tariffs = tariffHistory;
+
+        // Создаем счетчики только для индивидуальных услуг
+        this.data.meters = [
+            { id: 'mtr_el', serviceId: 'svc_el', name: 'Электроэнергия', number: 'ЭЛ001', unit: 'кВт⋅ч', type: 'single', canReset: false },
+            { id: 'mtr_xv', serviceId: 'svc_xv', name: 'Холодная вода', number: 'ХВ001', unit: 'м³', type: 'cold', canReset: false },
+            { id: 'mtr_gv', serviceId: 'svc_xv_gv', name: 'Горячая вода', number: 'ГВ001', unit: 'м³', type: 'hot', canReset: false }
+        ];
+
+        // Создаем показания счетчиков из данных
+        // Эл: 8 (02.2026), 513 (03.2026), 651 (04.2026), 821 (05.2026), 898 (06.2026)
+        // ХВ: 15.754 (02.2026), 23.664 (03.2026), 29.951 (04.2026), 36.469 (05.2026), 28.949 (06.2026), 42.04 (07.2026)
+        // ГВ: 6.95 (02.2026), 9.459 (03.2026), 12.269 (04.2026), 15.336 (05.2026), 17.213 (06.2026), 19.01 (07.2026)
+        const readings = [
+            // Электроэнергия
+            { id: Utils.generateId(), meterId: 'mtr_el', serviceId: 'svc_el', date: '2026-02-25', value: 8, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_el', serviceId: 'svc_el', date: '2026-03-25', value: 513, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_el', serviceId: 'svc_el', date: '2026-04-25', value: 651, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_el', serviceId: 'svc_el', date: '2026-05-25', value: 821, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_el', serviceId: 'svc_el', date: '2026-06-25', value: 898, comment: '' },
+            
+            // Холодная вода
+            { id: Utils.generateId(), meterId: 'mtr_xv', serviceId: 'svc_xv', date: '2026-02-25', value: 15.754, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_xv', serviceId: 'svc_xv', date: '2026-03-25', value: 23.664, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_xv', serviceId: 'svc_xv', date: '2026-04-25', value: 29.951, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_xv', serviceId: 'svc_xv', date: '2026-05-25', value: 36.469, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_xv', serviceId: 'svc_xv', date: '2026-06-25', value: 28.949, comment: 'Перерасчет' },
+            { id: Utils.generateId(), meterId: 'mtr_xv', serviceId: 'svc_xv', date: '2026-07-25', value: 42.04, comment: '' },
+            
+            // Горячая вода
+            { id: Utils.generateId(), meterId: 'mtr_gv', serviceId: 'svc_xv_gv', date: '2026-02-25', value: 6.95, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_gv', serviceId: 'svc_xv_gv', date: '2026-03-25', value: 9.459, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_gv', serviceId: 'svc_xv_gv', date: '2026-04-25', value: 12.269, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_gv', serviceId: 'svc_xv_gv', date: '2026-05-25', value: 15.336, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_gv', serviceId: 'svc_xv_gv', date: '2026-06-25', value: 17.213, comment: '' },
+            { id: Utils.generateId(), meterId: 'mtr_gv', serviceId: 'svc_xv_gv', date: '2026-07-25', value: 19.01, comment: '' }
+        ];
+
+        this.data.readings = readings;
+
+        // Создаем платежи на основе начислений из данных
+        // Суммируем начисления по месяцам (из таблицы пользователя)
+        const payments = [
+            { id: Utils.generateId(), date: '2026-03-10', period: '2026-02', amount: 7175.01, services: 'all', method: 'card', comment: '' },
+            { id: Utils.generateId(), date: '2026-04-10', period: '2026-03', amount: 8362.50, services: 'all', method: 'card', comment: '' },
+            { id: Utils.generateId(), date: '2026-05-10', period: '2026-04', amount: 5988.84, services: 'all', method: 'card', comment: '' },
+            { id: Utils.generateId(), date: '2026-06-10', period: '2026-05', amount: 5489.68, services: 'all', method: 'card', comment: '' },
+            { id: Utils.generateId(), date: '2026-07-10', period: '2026-06', amount: 3598.17, services: 'all', method: 'card', comment: '' },
+            { id: Utils.generateId(), date: '2026-08-10', period: '2026-07', amount: 3865.65, services: 'all', method: 'card', comment: '' }
+        ];
+
+        this.data.payments = payments;
 
         this.save();
     },
@@ -314,42 +293,24 @@ const AppState = {
             } else if (service.calcType === 'area') {
                 const tariff = this.getCurrentTariff(service.id);
                 if (tariff) {
-                    cost = Utils.round2(tariff.rate * this.data.settings.area / 1000);
+                    // Содержание жилья = тариф * площадь
+                    cost = Utils.round2(tariff.rate * this.data.settings.area);
                 }
             } else if (service.calcType === 'residents') {
                 const tariff = this.getCurrentTariff(service.id);
                 if (tariff) {
                     cost = Utils.round2(tariff.rate * this.data.settings.residents);
                 }
-            } else if (service.calcType === 'volume') {
-                // Водоотведение = холодная + горячая вода
-                const coldMeter = this.data.meters.find(m => m.type === 'cold');
-                const hotMeter = this.data.meters.find(m => m.type === 'hot');
-                
-                let totalVolume = 0;
-                [coldMeter, hotMeter].forEach(meter => {
-                    if (meter) {
-                        const currentReading = this.data.readings
-                            .filter(r => r.meterId === meter.id && r.date.startsWith(monthStr))
-                            .sort((a, b) => b.date.localeCompare(a.date))[0];
-                        
-                        const prevMonth = Utils.subtractMonths(new Date(`${monthStr}-15`), 1);
-                        const prevMonthStr = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`;
-                        
-                        const prevReading = this.data.readings
-                            .filter(r => r.meterId === meter.id && r.date.startsWith(prevMonthStr))
-                            .sort((a, b) => b.date.localeCompare(a.date))[0];
-
-                        if (currentReading && prevReading) {
-                            totalVolume += currentReading.value - prevReading.value;
-                        }
+            } else if (service.calcType === 'volume' || service.calcType === 'volume_sum') {
+                // Для услуг типа "volume" используем предопределенные объемы из данных
+                // Это нужно для общедомовых услуг и других, где объем фиксированный
+                const volumes = this.getServiceVolumes(monthStr, service.id);
+                if (volumes.consumption !== null) {
+                    consumption = volumes.consumption;
+                    const tariff = this.getCurrentTariff(service.id);
+                    if (tariff) {
+                        cost = Utils.round2(consumption * tariff.rate);
                     }
-                });
-
-                consumption = totalVolume;
-                const tariff = this.getCurrentTariff(service.id);
-                if (tariff) {
-                    cost = Utils.round2(totalVolume * tariff.rate);
                 }
             }
 
@@ -365,6 +326,31 @@ const AppState = {
         });
 
         return expenses;
+    },
+
+    /**
+     * Получение объемов потребления для услуг с типом volume
+     * Возвращает предопределенные значения из данных пользователя
+     */
+    getServiceVolumes(monthStr, serviceId) {
+        // Данные объемов и начислений из таблицы пользователя
+        // Примечание: svc_xv, svc_xv_gv и svc_el теперь имеют calcType: 'meter' и рассчитываются по счетчикам
+        const serviceData = {
+            'svc_gv_io': { volumes: { '2026-02': 0.405277, '2026-03': 0.405277, '2026-04': 0.405277, '2026-05': 0.405277, '2026-06': 0.405277, '2026-07': 0.405277 } },
+            'svc_xv_io': { volumes: { '2026-02': 0.378076, '2026-03': 0.378076, '2026-04': 0.378076, '2026-05': 0.378076, '2026-06': 0.378076, '2026-07': 0.378076 } },
+            'svc_vo_io': { volumes: { '2026-02': 0.783353, '2026-03': 0.783353, '2026-04': 0.783353, '2026-05': 0.783353, '2026-06': 0.783353, '2026-07': 0.783353 } },
+            'svc_el_io': { volumes: { '2026-02': 32.0907897, '2026-03': 31.14223, '2026-04': 31.14223, '2026-05': 31.14223, '2026-06': 31.14223, '2026-07': 31.14223 } },
+            'svc_tko': { volumes: { '2026-02': 0.174, '2026-03': 0.174, '2026-04': 0.174, '2026-05': 0.174, '2026-06': 0.174, '2026-07': 0.174 } },
+            'svc_vo': { volumes: { '2026-02': 8.324, '2026-03': 10.419, '2026-04': 9.097, '2026-05': 9.585, '2026-06': 4.357, '2026-07': 7.368 } },
+            'svc_heat_gv': { volumes: { '2026-02': 0.112, '2026-03': 0.117, '2026-04': 0.131, '2026-05': 0.143, '2026-06': 0.088, '2026-07': 0.084 } },
+            'svc_heating': { volumes: { '2026-02': 1.742, '2026-03': 1.411, '2026-04': 0.882, '2026-05': 0.547, '2026-06': 0, '2026-07': 0 } }
+        };
+
+        const data = serviceData[serviceId];
+        if (data && data.volumes[monthStr] !== undefined) {
+            return { consumption: data.volumes[monthStr] };
+        }
+        return { consumption: null };
     },
 
     /**
