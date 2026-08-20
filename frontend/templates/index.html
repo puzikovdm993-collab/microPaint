@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File & Text Tools</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛠️ Инструменты для работы с файлами и текстом</h1>
+            <div id="service-status" class="status-bar">
+                <span>Статус сервисов: </span>
+                <span id="gateway-status" class="status-item">🔵 Шлюз</span>
+                <span id="text-status" class="status-item">⚪ Текст</span>
+                <span id="file-status" class="status-item">⚪ Файлы</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="tools-section">
+                <h2>📝 Инструменты для текста</h2>
+                <div class="tool-card">
+                    <textarea id="text-input" placeholder="Введите текст здесь..."></textarea>
+                    <div class="button-group">
+                        <button onclick="reverseText()">Обратить</button>
+                        <button onclick="countText()">Подсчитать</button>
+                        <button onclick="uppercaseText()">В верхний регистр</button>
+                        <button onclick="lowercaseText()">В нижний регистр</button>
+                    </div>
+                    <div id="text-result" class="result-box"></div>
+                </div>
+            </section>
+
+            <section class="tools-section">
+                <h2>📁 Инструменты для файлов</h2>
+                <div class="tool-card">
+                    <div class="file-upload">
+                        <input type="file" id="file-input" />
+                        <button onclick="uploadFile()">Загрузить файл</button>
+                    </div>
+                    <div id="file-result" class="result-box"></div>
+                </div>
+
+                <div class="tool-card">
+                    <h3>Кодирование/Декодирование (Base64)</h3>
+                    <textarea id="encode-input" placeholder="Введите текст для кодирования/декодирования..."></textarea>
+                    <div class="button-group">
+                        <button onclick="encodeBase64()">Кодировать в Base64</button>
+                        <button onclick="decodeBase64()">Декодировать из Base64</button>
+                    </div>
+                    <div id="encode-result" class="result-box"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Микросервисная архитектура: API Gateway → Text Service + File Service</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
